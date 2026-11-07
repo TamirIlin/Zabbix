@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · ВКЗ Мониторинг'">Ошибка · ВКЗ Мониторинг</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/logo.svg}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/common :: header}"></div>
+
+<main class="container page">
+    <div class="card error-card">
+        <div class="error-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 8v5M12 16h.01"/>
+            </svg>
+        </div>
+        <h1 th:text="${title}">Что-то пошло не так</h1>
+        <p th:text="${message}">Не удалось выполнить запрос.</p>
+        <div class="error-actions">
+            <a class="btn btn-primary" th:href="@{/}">На главную</a>
+            <a class="btn btn-secondary" th:href="@{/settings}">Настройки</a>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/common :: footer}"></div>
+</body>
+</html>

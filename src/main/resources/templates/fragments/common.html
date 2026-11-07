@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header class="topbar" th:fragment="header">
+    <div class="container topbar-inner">
+        <a class="brand" th:href="@{/}" aria-label="ВКЗ — на главную">
+            <img class="brand-logo" th:src="@{/img/logo.svg}" alt="Логотип ВКЗ" width="42" height="42">
+            <span class="brand-text">
+                <span class="brand-title">ВКЗ</span>
+                <span class="brand-subtitle">Мониторинг инфраструктуры</span>
+            </span>
+        </a>
+        <nav class="topnav" aria-label="Основная навигация">
+            <a th:href="@{/}" class="topnav-link">Серверы</a>
+            <a th:href="@{/settings}" class="topnav-link">Настройки</a>
+        </nav>
+        <a class="icon-btn" th:href="@{/settings}" title="Настройки" aria-label="Настройки">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+            </svg>
+        </a>
+    </div>
+</header>
+
+<footer class="footer" th:fragment="footer">
+    <div class="container footer-inner">
+        <span>© 2026 ВКЗ · Аналитика ИТ-инфраструктуры</span>
+        <span class="footer-muted">Данные предоставлены Zabbix</span>
+    </div>
+</footer>
+
+</body>
+</html>

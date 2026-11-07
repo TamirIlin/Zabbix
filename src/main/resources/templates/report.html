@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${server.name()} + ' · Отчёт · ВКЗ Мониторинг'">Отчёт по серверу · ВКЗ Мониторинг</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/logo.svg}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/common :: header}"></div>
+
+<main class="container page">
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <a th:href="@{/}">Серверы</a>
+        <span aria-hidden="true">/</span>
+        <span th:text="${server.name()}">server</span>
+    </nav>
+
+    <section class="page-head report-page-head">
+        <div>
+            <div class="title-with-status">
+                <h1 th:text="${server.name()}">server</h1>
+                <span class="status-pill" th:classappend="${server.up()} ? 'is-up' : 'is-down'">
+                    <span class="status-dot"></span>
+                    <span th:text="${server.up()} ? 'Работает' : 'Недоступен'">Работает</span>
+                </span>
+            </div>
+            <p class="subtitle">
+                <span class="mono" th:text="${server.ip()}">10.0.0.1</span>
+                <span class="dot-separator">·</span>
+                Подробный отчёт по метрикам за выбранный период
+            </p>
+        </div>
+        <div class="page-actions">
+            <a class="btn btn-secondary" th:href="@{/}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+                К списку серверов
+            </a>
+        </div>
+    </section>
+
+    <div class="alert alert-info demo-banner" th:if="${demoMode}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 8h.01M11 12h1v4h1"/>
+        </svg>
+        <div>
+            <strong>Демо-режим.</strong>
+            Графики построены по тестовым данным. <a th:href="@{/settings}">Подключить Zabbix</a>
+        </div>
+    </div>
+
+    <form id="reportForm" class="card report-form">
+        <div class="report-form-grid">
+            <div class="field">
+                <label for="fromDate">Период от</label>
+                <input type="datetime-local" id="fromDate" name="from" required>
+            </div>
+            <div class="field">
+                <label for="toDate">Период до</label>
+                <input type="datetime-local" id="toDate" name="to" required>
+            </div>
+            <div class="field field-grow">
+                <span class="field-label">Метрики</span>
+                <div class="metric-choices">
+                    <label class="metric-chip" style="--metric-color:#2563eb">
+                        <input type="checkbox" name="metrics" value="cpu" checked>
+                        <span class="metric-chip-body">
+                            <span class="metric-chip-dot"></span>Процессор
+                        </span>
+                    </label>
+                    <label class="metric-chip" style="--metric-color:#7c3aed">
+                        <input type="checkbox" name="metrics" value="memory" checked>
+                        <span class="metric-chip-body">
+                            <span class="metric-chip-dot"></span>Память
+                        </span>
+                    </label>
+                    <label class="metric-chip" style="--metric-color:#f59e0b">
+                        <input type="checkbox" name="metrics" value="disk" checked>
+                        <span class="metric-chip-body">
+                            <span class="metric-chip-dot"></span>Диск
+                        </span>
+                    </label>
+                    <label class="metric-chip" style="--metric-color:#0d9488">
+                        <input type="checkbox" name="metrics" value="network" checked>
+                        <span class="metric-chip-body">
+                            <span class="metric-chip-dot"></span>Сеть
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="showBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 19V5M4 19h16"/>
+                    <path d="m7 15 4-4 3 3 5-6"/>
+                </svg>
+                Показать
+            </button>
+            <span class="hint">Выберите даты и отметьте нужные метрики</span>
+        </div>
+    </form>
+
+    <div id="reportAlert" class="alert alert-error" role="alert" hidden></div>
+
+    <div id="reportLoading" class="loading-card" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Строим отчёты по выбранным метрикам…</span>
+    </div>
+
+    <section id="reportResults" hidden>
+        <div id="pdfArea" class="pdf-area">
+            <div class="pdf-heading">
+                <div>
+                    <div class="pdf-kicker">Регламентный отчёт</div>
+                    <h2 th:text="'Сервер ' + ${server.name()}">Сервер</h2>
+                    <div class="pdf-meta" id="pdfMeta"></div>
+                </div>
+                <img th:src="@{/img/logo.svg}" alt="ВКЗ" width="52" height="52">
+            </div>
+            <div id="reportCards" class="report-cards"></div>
+        </div>
+
+        <div class="pdf-actions">
+            <button type="button" class="btn btn-primary" id="downloadPdf">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12"/>
+                    <path d="m7 10 5 5 5-5"/>
+                    <path d="M5 21h14"/>
+                </svg>
+                Скачать PDF
+            </button>
+            <span class="hint">Все графики и таблицы будут сохранены в один PDF-файл</span>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/common :: footer}"></div>
+
+<script th:inline="javascript">
+    window.REPORT = {
+        hostId: /*[[${server.hostId()}]]*/ '',
+        hostName: /*[[${server.name()}]]*/ '',
+        ip: /*[[${server.ip()}]]*/ '',
+        defaultFrom: /*[[${defaultFrom}]]*/ 0,
+        defaultTo: /*[[${defaultTo}]]*/ 0
+    };
+</script>
+<script th:src="@{/vendor/chart.umd.min.js}"></script>
+<script th:src="@{/vendor/html2canvas.min.js}"></script>
+<script th:src="@{/vendor/jspdf.umd.min.js}"></script>
+<script th:src="@{/js/report.js}"></script>
+</body>
+</html>

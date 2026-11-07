@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<td class="metric-td" th:fragment="cell(metric)">
+    <div class="metric-cell">
+        <div class="metric-bar" role="img" th:attr="aria-label=${metric.text()}">
+            <span class="metric-fill" th:classappend="${metric.cssClass()}" th:style="|width:${metric.width()}%|"></span>
+        </div>
+        <span class="metric-value" th:text="${metric.text()}">0%</span>
+    </div>
+</td>
+
+</body>
+</html>
