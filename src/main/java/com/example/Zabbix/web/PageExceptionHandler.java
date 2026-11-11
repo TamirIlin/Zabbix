@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 public class PageExceptionHandler {
@@ -24,6 +25,13 @@ public class PageExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ModelAndView handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
         return errorView(request, "Объект не найден", ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ModelAndView handleNoResource(NoResourceFoundException ex, HttpServletRequest request) {
+        return errorView(request, "Страница не найдена",
+                "Запрошенная страница или ресурс не найдены. Проверьте адрес или вернитесь на главную.",
+                HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
